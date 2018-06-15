@@ -42,7 +42,6 @@ function winMsg() {
         url: queryURL,
         method: "GET"
     }).then(function(response) {
-            console.log(response);
             var title = $("<h2>").text(response.Title);
             var rating = $("<p>").text(response.Rated);
             var relDate = $("<p>").text("Rel: " + response.Released);
