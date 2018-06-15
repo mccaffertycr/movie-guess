@@ -6,35 +6,37 @@
   <title>Guess the Movie</title>
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/reset.css"/>
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css"/>
-  <script type="text/javascript" src="/assets/ajax/data.json"></script>
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>  
 </head>
 
 <body>
 
-  <div class="container">
-
-    <div id="answer-array"></div>
-
-    <form id="movie-form">
-      <label for="movie-input">Add a Movie Bro</label>
-      <input type="text" id="movie-input"><br>
-
-      <!-- Button triggers new movie to be added -->
-      <input id="add-movie" type="submit" value="Add a Movie Bro">
-    </form>
-
-    <!--  -->
+<div class="container">
+    <!-- header display -->
+    <div id="note">
+      <h1>PRESS ANY KEY TO START GUESSING</h1>
+    </div>
+    <!-- winner info will be displayed here -->
+    <div id="gameover"></div>
+    <!--answerarray will be displayed here -->
+    <div id="game"></div>
+    <!-- number of guesses left -->
+    <div id="guess-left"></div>
+    <!-- letters already guessed-->
+    <div id="guessed"></div>
     <!-- Button for hint to show -->
     <input id="show-hint" type="submit" value="need a hint?">
+    <div id="hint"></div>
 
     <!-- win/lose message will get displayed here -->
     <div id="gameover"></div>
 
-
 </div>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>  
-    <script type="text/javascript" src="/assets/js/main.js"></script>   
 
+<script src="assets/js/data.js"></script>
+<script src="assets/api/config.js"></script>
+<script src="assets/js/main.js"></script>  
 
 </body>
 
