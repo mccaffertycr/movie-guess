@@ -1,162 +1,156 @@
-    var rndm = "";
+// variable declarations
+var rndm = '';
+var answerArray = [];
+var guessCounter = 20;
+var guessedLetters = [];
+var guessDisplay = [];
+var userGuess = '';
+var gameOver;
+var winTimeout;
 
-    // create answer array
-    var answerArray = [];
-
-    // guess counter
-    var guessCounter = 20;
-
-    // guessed letters
-    var guessedLetters = [];
-
-    //guess display 
-    var guessDisplay = [];
-
-    // empty guess var
-    var userGuess = "";
-
-    var gameOver;
-
-    var winTimeout;
-
-    // function that changes answerarray to underscores & prints
-    function answerBlank(a) {
-        for (var i = 0; i < data.movies[rndm].length; i++) {
-            if (data.movies[rndm][i] === " ") {
-                a[i] = " ";
-            } else {
-                a[i] = "_";
-            }
-        }
-    }
-// win message function
-function winMsg() {
-    var queryURL = "https://www.omdbapi.com/?t=" + data.movies[rndm] + "&y=&plot=short&apikey=" + APIKEY;
-    $("#guess-left").text("YOU WIN!!");
-    $("#note").hide();
-    $("#game").empty();
-    $("#hint").empty();
-    $("#show-hint").hide();
-    $("#guessed").empty();
-    $.ajax({
-        url: queryURL,
-        method: "GET"
-    }).then(function(response) {
-            var title = $("<h2>").text(response.Title);
-            var rating = $("<p>").text(response.Rated);
-            var relDate = $("<p>").text("Rel: " + response.Released);
-            var dir = $("<p>").text(response.Director);
-            var poster = $("<img src=" + response.Poster + ">");
-            $("#guessed").append(title, rating, relDate, dir);
-            $("#gameover").append(poster); 
-          });
-    }
-
-
-// function to start game
+// main game logic
 function startGame() {  
+  // reset game over
+  gameOver = false;
 
-    // empty the gameover msg
-    $("#gameover").empty();
+  // empty the gameover msg
+  $('#gameover').empty();
 
-    // reprint the header
-    $("#note").show();
+  // reprint the header
+  $('#note').show();
 
-    // pick a random title               
-    rndm = Math.floor(Math.random()*data.movies.length);
+  // show hint button
+  $('#show-hint').show();
 
-    gameOver = false;
+  // clears the hint
+  $('#hint').empty();
 
-    // show hint button
-    $("#show-hint").show();
+  //clears win timeout
+  clearTimeout(winTimeout);
 
-    // clears the hint
-    $("#hint").empty();
+  // pick a random title               
+  rndm = Math.floor(Math.random()*data.movies.length);
 
-    //clears win timeout
-    clearTimeout(winTimeout);
+  // empty answer array
+  answerArray = [];
+  
+  // fills answer array with underscores 
+  answerBlank(answerArray);
 
-    //reset answerArray to empty
-    answerArray = [];
-    
-    // fills answer array with underscores 
-    answerBlank(answerArray);
+  // print answer array to html
+  $('#game').text(answerArray.join(''));
 
-    // print answer array to html
-    $("#game").text(answerArray.join(""));
+  // reset guesses
+  guessCounter = 20;
 
-    // reset guesses
-    guessCounter = 20;
+  guessedLetters = [];
 
-    guessedLetters = [];
+   // Prints the blanks at the beginning of each round in the HTML.
+  $('#guessed').text('ALREADY GUESSED: ' + (guessedLetters.join(' ')));
 
-     // Prints the blanks at the beginning of each round in the HTML.
-    $("#guessed").text("ALREADY GUESSED: " + (guessedLetters.join(" ")));
-
-    // reset the guess counter
-    $("#guess-left").text("GUESSES LEFT:" + guessCounter);
+  // reset the guess counter
+  $('#guess-left').text('GUESSES LEFT:' + guessCounter);
 }
 
-// starts game
+// converts the chosen title to an array of underscores
+function answerBlank(a) {
+
+  for (var i = 0; i < data.movies[rndm].length; i++) {
+    if (data.movies[rndm][i] === ' ') {
+        a[i] = ' ';
+    } else {
+        a[i] = '_';
+    }
+  }
+
+}
+
+// win message function
+function winMsg() {
+
+  var queryURL = 'https://www.omdbapi.com/?t=' + data.movies[rndm] + '&y=&plot=short&apikey=' + APIKEY;
+  $('#guess-left').text('YOU WIN!!');
+  $('#note').hide();
+  $('#game').empty();
+  $('#hint').empty();
+  $('#show-hint').hide();
+  $('#guessed').empty();
+
+  $.ajax({
+    url: queryURL,
+    method: 'GET'
+  }).then(function(response) {
+    var title = $('<h2>').text(response.Title);
+    var rating = $('<p>').text(response.Rated);
+    var relDate = $('<p>').text('Rel: ' + response.Released);
+    var dir = $('<p>').text(response.Director);
+    var poster = $('<img src=' + response.Poster + '>');
+    $('#guessed').append(title, rating, relDate, dir);
+    $('#gameover').append(poster); 
+  });
+
+}
+
+
+// start game
 startGame();
 
-// function run when user starts guessing
-$(document).on("keyup", function(e) {
 
-    if (!gameOver) {
-    // determines guess
-    userGuess = e.key;
-     
+// event listener for key presses
+$(document).on('keyup', function(e) {
+
+  e.preventDefault();
+
+  if (!gameOver) {
+    userGuess = e.key;  
     // change answer array to reflect guess if it's correct
     for (var g = 0; g < answerArray.length; g++) {
-        if (userGuess.toUpperCase() === data.movies[rndm][g].toUpperCase()) {
-            answerArray[g] = userGuess.toUpperCase();
-        }
+      if (userGuess.toUpperCase() === data.movies[rndm][g].toUpperCase()) {
+        answerArray[g] = userGuess.toUpperCase();
+      }
     } 
     // re-print answer array with answerto html
-    $("#game").text(answerArray.join(""));
-
+    $('#game').text(answerArray.join(''));
     // save guesses to guessLetters
     guessedLetters.push(userGuess.toUpperCase());
     // display guessed letters
-    $("#guessed").text("ALREADY GUESSED: " + (guessedLetters.join("")));
-    // guessDisplay = $("guessed").text() += userGuess.toUpperCase();
-
+    $('#guessed').text('ALREADY GUESSED: ' + (guessedLetters.join('')));
     // guess counter display
-   $("#guess-left").text("GUESSES LEFT:" + (guessCounter--));
-}
+    $('#guess-left').text('GUESSES LEFT:' + (guessCounter--));
+  }
 
-    // restart function conditions
-    if (guessedLetters.length === 20) {
-        gameOver = true;
-        $("#game").text("OUT OF GUESSES, TRY AGAIN!");
-        setTimeout(function() {
-            startGame();  
-        }, 2500);
-    } else if (answerArray.join("") === data.movies[rndm].toUpperCase()) {
-        gameOver = true;
-        winMsg();
-        setTimeout(function() {
-            startGame();  
-        }, 10000);
-    }
+  // game over conditions
+  if (guessedLetters.length > 20) {
+    gameOver = true;
+    $('#game').text('OUT OF GUESSES, TRY AGAIN!');
+    setTimeout(function() {
+      startGame();  
+    }, 2500);
+  } else if (answerArray.join('') === data.movies[rndm].toUpperCase()) {
+    gameOver = true;
+    winMsg();
+    setTimeout(function() {
+      startGame();  
+    }, 10000);
+  }
+
 });
 
-   // connect button with relevant hint
-   $("#show-hint").on("click", function() {
-    $("#hint").empty();
-    var queryURL = "https://www.omdbapi.com/?t=" + data.movies[rndm] + "&y=&plot=short&apikey=" + APIKEY;
+// event listener for hint
+$('#show-hint').on('click', function() {
 
-    // Creates AJAX call for the specific movie button being clicked
-    $.ajax({
-      url: queryURL,
-      method: "GET"
-    }).then(function(response) {
-        console.log(response);
+  $('#hint').empty();
+  var queryURL = 'https://www.omdbapi.com/?t=' + data.movies[rndm] + '&y=&plot=short&apikey=' + APIKEY;
+
+  $.ajax({
+    url: queryURL,
+    method: 'GET'
+  }).then(function(response) {
     if (data.movies[rndm] === response.Title) {
-        $("#hint").text(response.Plot);
+      $('#hint').text(response.Plot);
     }
-    });
+  });
+
 });
 
 
